@@ -96,17 +96,19 @@ def update_user():
     new_username_element = user_element.find('.//ns1:username', namespace)
     password_element = user_element.find('.//ns1:password', namespace)
     email_element = user_element.find('.//ns1:email', namespace)
+    token_element = soap_request_xml.find('.//ns1:authToken', namespace)
 
     # Extract the values of the username, password, and email elements from the SOAP request
     username = username_element.text
     new_username = new_username_element.text
     new_password = password_element.text
     new_email = email_element.text
+    new_token = token_element.text
     
     # Update the user in the database
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-    c.execute("UPDATE users SET password = ?, username = ?, email = ? WHERE username = ?", (new_password, new_username, new_email, username))
+    c.execute("UPDATE users SET password = ?, username = ?, email = ?, authToken = ? WHERE username = ?", (new_password, new_username, new_email, new_token, username))
     conn.commit()
     conn.close()
 
@@ -194,14 +196,17 @@ def get_user():
 
     # Find the username element
     username_element = soap_request_xml.find('.//ns1:username', namespace)
+    token_element = soap_request_xml.find('.//ns1:authToken', namespace)
 
     # Extract the values of the username from the SOAP request
     username = username_element.text
+    token = token_element.text
     
     # Retrieve the user from the database
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE username = ?", (username,))
+    c.execute("SELECT * FROM users WHERE username = ? AND authToken = ?", (username, token))  
+    # c.execute("SELECT * FROM users WHERE username = ? AND token = ", (username,))
     result = c.fetchone()
     conn.close()
     
@@ -219,6 +224,39 @@ def get_user():
         print(ET.tostring(soap_response))
         # Return a success message
         return ET.tostring(soap_response)
+    
+# Define the set auth token endpoint
+@app.route('/setAuthToken', methods=['POST'])
+def set_auth_token():
+    # Parse the username and auth token from the request body
+    soap_request_xml = ET.fromstring(request.data)
+
+    # Find the username and auth token elements
+
+    username_element = soap_request_xml.find('.//ns1:username', namespace)
+    token_element = soap_request_xml.find('.//ns1:authToken', namespace)
+
+    # Extract the values of the username and auth token from the SOAP request
+    username = username_element.text
+    token = token_element.text
+
+    # Update the user in the database
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute("UPDATE users SET authToken = ? WHERE username = ?", (token, username))
+    conn.commit()
+    conn.close()
+
+    # Create the SOAP response
+    response = ET.Element('ns1:user', {'xmlns:ns1': 'http://localhost:5000/user-service'})
+    response_username = ET.SubElement(response, 'ns1:username').text = username
+    response_token = ET.SubElement(response, 'ns1:authToken').text = token
+
+    soap_response = createSOAPResponse(response)
+
+    # Return a success message
+    return ET.tostring(soap_response)
+
 
 if __name__ == '__main__':
     app.run()

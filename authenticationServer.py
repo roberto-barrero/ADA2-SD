@@ -30,25 +30,34 @@ def login(username, password):
 
     # Send the SOAP request to the database service
     response = requests.post('http://localhost:5000/getPassword', data=ET.tostring(soap_request), headers={'Content-Type': 'application/xml'})
-    
-    print("Database response: " + str(response.text))
 
     # Parse the SOAP response from the database service
     soap_response_xml = ET.fromstring(response.text)
 
-    print("Response: " + str(ET.tostring(soap_response_xml)))
     password_element = soap_response_xml.find('.//ns1:getPasswordResponse', database_namespace)
     password_value = password_element.find('.//ns1:password', database_namespace)
     actual_password = password_value.text
 
-    print("Actual password: " + actual_password)
-
-
     if password == actual_password:
         
-       # Create the SOAP response
+        # Create the SOAP request to update the auth token
+        soap_request = ET.Element('ns0:Envelope', {'xmlns:ns0': 'http://schemas.xmlsoap.org/soap/envelope/', 'xmlns:ns1': 'http://localhost:5000/user-service'})
+        soap_body = ET.SubElement(soap_request, 'ns0:Body')
+        body = ET.Element('ns1:user')
+        token = str(uuid.uuid4())
+        name = ET.SubElement(body, 'ns1:username').text = username
+        token_value = ET.SubElement(body, 'ns1:authToken').text = str(uuid.uuid4())
+        soap_body.append(body)
+
+        # Send the SOAP request to the database service
+        response = requests.post('http://localhost:5000/setAuthToken', data=ET.tostring(soap_request), headers={'Content-Type': 'application/xml'})
+
+        print(response.text)
+
+
+        # Create the SOAP response for the client
         response = ET.Element('ns1:LoginResponse', {'xmlns:ns1': 'http://localhost:8000/authentication'})
-        response_token = ET.SubElement(response, 'ns1:authToken').text = str(uuid.uuid4())
+        response_token = ET.SubElement(response, 'ns1:authToken').text = token
 
         soap_response = createSOAPResponse(response)
         return ET.tostring(soap_response)

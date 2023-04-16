@@ -13,6 +13,7 @@
           <xsd:element name="username" type="xsd:string"/>
           <xsd:element name="password" type="xsd:string"/>
           <xsd:element name="email" type="xsd:string"/>
+          <xsd:element name="authToken" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
       
@@ -50,6 +51,7 @@
       <xsd:complexType name="getPasswordRequest">
         <xsd:sequence>
           <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="authToken" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
 
@@ -100,6 +102,9 @@
   <message name="getUserResponse">
     <part name="response" element="tns:getUserResponse"/>
   </message>
+  <message name="setAuthToken">
+    <part name="request" element="tns:user"/>
+  </message>
 
   <portType name="UserServicePortType">
     <operation name="createUser">
@@ -121,6 +126,10 @@
     <operation name="getUser">
       <input message="tns:getUserRequest"/>
       <output message="tns:getUserResponse"/>
+    </operation>
+    <operation name="setAuthToken">
+      <input message="tns:user"/>
+      <output message="tns:user"/>
     </operation>
   </portType>
 
@@ -177,6 +186,17 @@
         <soap:body use="literal"/>
       </output>
     </operation>
+
+    <operation name="setAuthToken">
+      <soap:operation soapAction="http://localhost:5000/user-service/setAuthToken"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
   </binding>
 
   <service name="UserService">
