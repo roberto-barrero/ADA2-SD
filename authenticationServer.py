@@ -73,11 +73,13 @@ def authentication():
     # Extract the values of the username from the SOAP request
     username = username_element.text
     password = password_element.text
+    
 
     print("Username: " + username, "Password: " + password)
     try:
         auth_token = client.service.login(username, password)
-        return auth_token, 200
+        response = Flask.response_class(response=auth_token, status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})
+        return response
     except Fault as e:
         return str(e), 401
 
