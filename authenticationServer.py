@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 import uuid
 import xml.etree.ElementTree as ET
 import requests
+import hashlib
 
 # Define the namespace
 namespace = {'ns0': "http://schemas.xmlsoap.org/soap/envelope/", 'ns1': 'http://localhost:8000/authentication'}
@@ -38,7 +39,9 @@ def login(username, password):
     password_value = password_element.find('.//ns1:password', database_namespace)
     actual_password = password_value.text
 
-    if password == actual_password:
+    # print("Actual Password: " + actual_password, "Password: " + password)
+
+    if hashlib.sha256(password.encode("utf-8")).hexdigest() == actual_password:
         
         # Create the SOAP request to update the auth token
         soap_request = ET.Element('ns0:Envelope', {'xmlns:ns0': 'http://schemas.xmlsoap.org/soap/envelope/', 'xmlns:ns1': 'http://localhost:5000/user-service'})
@@ -52,7 +55,7 @@ def login(username, password):
         # Send the SOAP request to the database service
         response = requests.post('http://localhost:5000/setAuthToken', data=ET.tostring(soap_request), headers={'Content-Type': 'application/xml'})
 
-        print(response.text)
+        # print(response.text)
 
 
         # Create the SOAP response for the client
@@ -76,7 +79,10 @@ def authentication():
     # Parse the username from the request body
     soap_request_xml = ET.fromstring(request.data)
 
+    # print("SOAP Request: " + ET.tostring(soap_request_xml).decode('utf-8'))
+
     # Find the username element
+    login_element = soap_request_xml.find('.//ns1:LoginRequest', namespace)
     username_element = soap_request_xml.find('.//ns1:username', namespace)
     password_element = soap_request_xml.find('.//ns1:password', namespace)
 
@@ -85,7 +91,7 @@ def authentication():
     password = password_element.text
     
 
-    print("Username: " + username, "Password: " + password)
+    # print("Username: " + username, "Password: " + password)
     try:
         auth_token = client.service.login(username, password)
         response = Flask.response_class(response=auth_token, status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})

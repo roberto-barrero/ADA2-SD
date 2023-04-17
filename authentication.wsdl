@@ -1,4 +1,4 @@
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+<!-- <definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:tns="http://localhost:8000/authentication"
@@ -6,20 +6,32 @@
     targetNamespace="http://localhost:8000/authentication">
     
     <types>
-        <xsd:schema targetNamespace="http://localhost:8000/authentication">
-            <xsd:element name="Username" type="xsd:string"/>
-            <xsd:element name="Password" type="xsd:string"/>
-            <xsd:element name="AuthToken" type="xsd:string"/>
+        <xsd:schema targetNamespace="http://localhost:8000/authentication" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element name="username" type="xsd:string"/>
+            <xsd:element name="password" type="xsd:string"/>
+            <xsd:element name="authToken" type="xsd:string"/>
+                  <xsd:element name="createUserRequest" type="tns:createUserRequest"/>
+      <xsd:element name="LoginRequest" type="tns:LoginRequest"/>
+      <xsd:complexType name="LoginRequest">
+        <xsd:sequence>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="password" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="LoginResponse" type="tns:LoginResponse"/>
+      <xsd:complexType name="LoginResponse">
+        <xsd:sequence>
+          <xsd:element name="authToken" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
         </xsd:schema>
     </types>
     
     <message name="LoginRequest">
-        <part name="username" element="tns:Username"/>
-        <part name="password" element="tns:Password"/>
+        <part name="request" element="tns:LoginRequest"/>
     </message>
-    
     <message name="LoginResponse">
-        <part name="authToken" element="tns:AuthToken"/>
+        <part name="response" element="tns:LoginResponse"/>
     </message>
     
     <portType name="AuthenticationPortType">
@@ -34,10 +46,10 @@
         <operation name="login">
             <soap:operation soapAction="http://localhost:8000/authentication/login"/>
             <input>
-                <soap:body use="encoded" namespace="http://localhost:8000/authentication" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                <soap:body use="literal" />
             </input>
             <output>
-                <soap:body use="encoded" namespace="http://localhost:8000/authentication" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                <soap:body use="literal" />
             </output>
         </operation>
     </binding>
@@ -48,4 +60,70 @@
         </port>
     </service>
     
+</definitions> -->
+
+<definitions name="UserService"
+             targetNamespace="http://localhost:8000/authentication"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://localhost:8000/authentication">
+
+  <types>
+    <xsd:schema targetNamespace="http://localhost:8000/authentication"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+      <xsd:element name="LoginRequest" type="tns:LoginRequest"/>
+      <xsd:complexType name="LoginRequest">
+        <xsd:sequence>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="password" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="LoginResponse" type="tns:LoginResponse"/>
+      <xsd:complexType name="LoginResponse">
+        <xsd:sequence>
+          <xsd:element name="authToken" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+    </xsd:schema>
+  </types>
+
+  <message name="LoginRequest">
+    <part name="request" element="tns:LoginRequest"/>
+  </message>
+  <message name="LoginResponse">
+    <part name="response" element="tns:LoginResponse"/>
+  </message>
+
+  <portType name="AuthenticationPortType">
+    <operation name="login">
+      <input message="tns:LoginRequest"/>
+      <output message="tns:LoginResponse"/>
+    </operation>
+  </portType>
+
+  <binding name="AuthenticationBinding" type="tns:AuthenticationPortType">
+    <soap:binding style="document"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="login">
+      <soap:operation soapAction="http://localhost:8000/authentication/login"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+
+  </binding>
+
+  <service name="Authentication">
+    <port name="AuthenticationPort" binding="tns:AuthenticationBinding">
+      <soap:address location="http://localhost:8000/authentication"/>
+    </port>
+  </service>
+
 </definitions>
+

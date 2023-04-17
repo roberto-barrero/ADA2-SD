@@ -14,7 +14,6 @@
           <xsd:element name="password" type="xsd:string"/>
           <xsd:element name="email" type="xsd:string"/>
           <xsd:element name="name" type="xsd:string"/>
-          <xsd:element name="authToken" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
       
@@ -25,24 +24,48 @@
           <xsd:element name="user" type="tns:user"/>
         </xsd:sequence>
       </xsd:complexType>
+      <xsd:element name="createUserResponse" type="tns:createUserResponse"/>
+      <xsd:complexType name="createUserResponse">
+        <xsd:sequence>
+          <xsd:element name="user" type="tns:user"/>
+        </xsd:sequence>
+      </xsd:complexType>
 
       <xsd:element name="getUserRequest" type="tns:getUserRequest"/>
       <xsd:complexType name="getUserRequest">
         <xsd:sequence>
-          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="authToken" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="getUserResponse" type="tns:getUserResponse"/>
+      <xsd:complexType name="getUserResponse">
+        <xsd:sequence>
+          <xsd:element name="user" type="tns:user"/>
         </xsd:sequence>
       </xsd:complexType>
 
       <xsd:element name="updateUserRequest" type="tns:updateUserRequest"/>
       <xsd:complexType name="updateUserRequest">
         <xsd:sequence>
-          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="authToken" type="xsd:string"/>
+          <xsd:element name="user" type="tns:user"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="updateUserResponse" type="tns:updateUserResponse"/>
+      <xsd:complexType name="updateUserResponse">
+        <xsd:sequence>
           <xsd:element name="user" type="tns:user"/>
         </xsd:sequence>
       </xsd:complexType>
 
       <xsd:element name="deleteUserRequest" type="tns:deleteUserRequest"/>
       <xsd:complexType name="deleteUserRequest">
+        <xsd:sequence>
+          <xsd:element name="authToken" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="deleteUserResponse" type="tns:deleteUserResponse"/>
+      <xsd:complexType name="deleteUserResponse">
         <xsd:sequence>
           <xsd:element name="username" type="xsd:string"/>
         </xsd:sequence>
@@ -52,25 +75,8 @@
       <xsd:complexType name="getPasswordRequest">
         <xsd:sequence>
           <xsd:element name="username" type="xsd:string"/>
-          <xsd:element name="authToken" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>
-
-      <xsd:element name="getUserResponse" type="tns:getUserResponse"/>
-      <xsd:complexType name="getUserResponse">
-        <xsd:sequence>
-          <xsd:element name="user" type="tns:user"/>
-        </xsd:sequence>
-      </xsd:complexType>
-
-      <xsd:element name="deleteUserResponse" type="tns:deleteUserResponse"/>
-      <xsd:complexType name="deleteUserResponse">
-        <xsd:sequence>
-          <xsd:element name="username" type="xsd:string"/>
-        </xsd:sequence>
-      </xsd:complexType>
-
-
       <xsd:element name="getPasswordResponse" type="tns:getPasswordResponse"/>
       <xsd:complexType name="getPasswordResponse">
         <xsd:sequence>
@@ -78,6 +84,19 @@
         </xsd:sequence>
       </xsd:complexType>
 
+      <xsd:element name="setAuthTokenRequest" type="tns:setAuthTokenRequest"/>
+      <xsd:complexType name="setAuthTokenRequest">
+        <xsd:sequence>
+          <xsd:element name="username" type="xsd:string"/>
+          <xsd:element name="authToken" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="setAuthTokenResponse" type="tns:setAuthTokenResponse"/>
+      <xsd:complexType name="setAuthTokenResponse">
+        <xsd:sequence>
+          <xsd:element name="authToken" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
 
     </xsd:schema>
   </types>
@@ -85,36 +104,53 @@
   <message name="createUserRequest">
     <part name="request" element="tns:createUserRequest"/>
   </message>
+  <message name="createUserResponse">
+    <part name="response" element="tns:createUserResponse"/>
+  </message>
+
   <message name="updateUserRequest">
     <part name="request" element="tns:updateUserRequest"/>
   </message>
+  <message name="updateUserResponse">
+    <part name="response" element="tns:user"/>
+  </message>
+
   <message name="deleteUserRequest">
     <part name="request" element="tns:deleteUserRequest"/>
   </message>
+  <message name="deleteUserResponse">
+    <part name="response" element="tns:deleteUserResponse"/>
+  </message>
+
   <message name="getPasswordRequest">
     <part name="request" element="tns:getPasswordRequest"/>
   </message>
   <message name="getPasswordResponse">
     <part name="response" element="tns:getPasswordResponse"/>
   </message>
+
   <message name="getUserRequest">
     <part name="request" element="tns:getUserRequest"/>
   </message>
   <message name="getUserResponse">
     <part name="response" element="tns:getUserResponse"/>
   </message>
-  <message name="setAuthToken">
-    <part name="request" element="tns:user"/>
+
+  <message name="setAuthTokenRequest">
+    <part name="request" element="tns:setAuthTokenRequest"/>
+  </message>
+  <message name="setAuthTokenResponse">
+    <part name="response" element="tns:setAuthTokenResponse"/>
   </message>
 
   <portType name="UserServicePortType">
     <operation name="createUser">
       <input message="tns:createUserRequest"/>
-      <output message="tns:user"/>
+      <output message="tns:createUserResponse"/>
     </operation>
     <operation name="updateUser">
       <input message="tns:updateUserRequest"/>
-      <output message="tns:user"/>
+      <output message="tns:updateUserResponse"/>
     </operation>
     <operation name="deleteUser">
       <input message="tns:deleteUserRequest"/>
@@ -129,8 +165,8 @@
       <output message="tns:getUserResponse"/>
     </operation>
     <operation name="setAuthToken">
-      <input message="tns:user"/>
-      <output message="tns:user"/>
+      <input message="tns:setAuthTokenRequest"/>
+      <output message="tns:setAuthTokenResponse"/>
     </operation>
   </portType>
 
