@@ -83,7 +83,7 @@ def create_user():
     soap_response = createSOAPResponse(response)
     print(ET.tostring(soap_response))
     # Return a success message
-    return ET.tostring(soap_response)
+    return Flask.response_class(response=ET.tostring(soap_response), status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})
 
 # Define the update user endpoint
 @app.route('/updateUser', methods=['POST'])
@@ -122,7 +122,7 @@ def update_user():
     soap_response = createSOAPResponse(response)
     
     # Return a success message
-    return ET.tostring(soap_response)
+    return Flask.response_class(response=ET.tostring(soap_response), status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})
 
 # Define the delete user endpoint
 @app.route('/deleteUser', methods=['POST'])
@@ -186,7 +186,7 @@ def get_password():
         soap_response = createSOAPResponse(response)
         
         # Return the password
-        return ET.tostring(soap_response)
+        return Flask.response_class(response=ET.tostring(soap_response), status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})
   
 # Define the get user endpoint
 @app.route('/getUser', methods=['POST'])
@@ -223,7 +223,7 @@ def get_user():
         soap_response = createSOAPResponse(response)
         print(ET.tostring(soap_response))
         # Return a success message
-        return ET.tostring(soap_response)
+        return Flask.response_class(response=ET.tostring(soap_response), status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})
     
 # Define the set auth token endpoint
 @app.route('/setAuthToken', methods=['POST'])
@@ -255,7 +255,7 @@ def set_auth_token():
     soap_response = createSOAPResponse(response)
 
     # Return a success message
-    return ET.tostring(soap_response)
+    return Flask.response_class(response=ET.tostring(soap_response), status=200, mimetype='text/xml', headers={'Access-Control-Allow-Origin': '*'})
 
 
 if __name__ == '__main__':

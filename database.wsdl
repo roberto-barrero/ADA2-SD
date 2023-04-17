@@ -13,6 +13,7 @@
           <xsd:element name="username" type="xsd:string"/>
           <xsd:element name="password" type="xsd:string"/>
           <xsd:element name="email" type="xsd:string"/>
+          <xsd:element name="name" type="xsd:string"/>
           <xsd:element name="authToken" type="xsd:string"/>
         </xsd:sequence>
       </xsd:complexType>

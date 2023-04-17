@@ -46,7 +46,7 @@ def login(username, password):
         body = ET.Element('ns1:user')
         token = str(uuid.uuid4())
         name = ET.SubElement(body, 'ns1:username').text = username
-        token_value = ET.SubElement(body, 'ns1:authToken').text = str(uuid.uuid4())
+        token_value = ET.SubElement(body, 'ns1:authToken').text = token
         soap_body.append(body)
 
         # Send the SOAP request to the database service
@@ -69,6 +69,7 @@ app = Flask(__name__)
 @app.route('/authentication', methods=['POST'])
 def authentication():
     client = Client(wsdl='authentication.wsdl')
+    
     # Define the login operation
     client.service.login = login
 
