@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Tareas y búsqueda{% endblock %}
+{% block content %}
+<style>
+
+.custom-card {
+    width: 300px;
+    height: 254px;
+    border-radius: 20px;
+    background: #f3f3f3;
+    position: relative;
+    padding: 1.8rem;
+    border: 2px solid #ffffff;
+    transition: 0.5s ease-out;
+    overflow: visible;
+    margin: 24px;
+}
+
+
+.custom-card-button {
+    transform: translate(-50%, 125%);
+    width: 60%;
+    border-radius: 1rem;
+    border: none;
+    background-color: #e08f14;
+    color: #fff;
+    font-size: 1rem;
+    padding: .5rem 1rem;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    opacity: 0;
+    transition: 0.3s ease-out;
+}
+
+.overflow-ellipsis{
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    border-style: none;
+}
+
+.text-subtitle{
+    color: #a8a8a8;
+}
+
+.text-body {
+    color: #585858 !important;
+}
+
+/*Text*/
+.text-title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0rem;
+}
+
+/*Hover*/
+.custom-card:hover {
+    border-color: #e08f14;
+    box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+}
+
+.custom-card:hover .custom-card-button {
+    transform: translate(-50%, 50%);
+    opacity: 1;
+}
+</style>
+    <div>
+        <h2 class="text-center mt-3" data-aos="zoom-in-up" data-aos-duration="800">Lista de recursos</h2>
+        <div class="row mx-3">
+            {% for resource in resources %}
+            <div class="col col-sm-6 col-md-6 col-lg-4 col-xl-3 px-0 mx-0">
+                <div class="custom-card" data-aos="fade-up" data-aos-duration="800">
+                    <div>
+                        <p class="text-title overflow-ellipsis">{{resource.titulo}}</p>
+                        <p class="text-subtitle">{{resource.tipo}}</p>
+                        <p class="text-body overflow-ellipsis"">{{resource.descripcion}}</p>
+                    </div>
+                    <button class="custom-card-button" onclick="window.open('{{resource.url}}','_blank')">¡Llévame!</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
